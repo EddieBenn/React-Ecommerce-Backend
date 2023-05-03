@@ -29,11 +29,12 @@ exports.ProductSchema = new mongoose_1.default.Schema({
     title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     categories: { type: (Array) },
-    size: { type: String },
-    color: { type: String },
+    size: { type: Array },
+    color: { type: Array },
     prize: { type: Number },
     adminId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User" },
     image: { type: String },
+    inStock: { type: Boolean, default: true },
 }, {
     timestamps: true
 });

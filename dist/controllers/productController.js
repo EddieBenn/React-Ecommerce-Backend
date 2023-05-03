@@ -115,13 +115,13 @@ const updateProduct = async (req, res) => {
             });
         }
         const updatedProduct = await productModel_1.default.findByIdAndUpdate(id, {
-            title: req.body.title,
-            description: req.body.description,
-            categories: req.body.categories,
-            size: req.body.size,
-            color: req.body.color,
-            prize: req.body.prize,
-            image: req.file.path,
+            title: req.body.title || product.title,
+            description: req.body.description || product.description,
+            categories: req.body.categories || product.categories,
+            size: req.body.size || product.size,
+            color: req.body.color || product.color,
+            prize: req.body.prize || product.prize,
+            image: req.file.path || product.image,
         }, {
             new: true,
         });

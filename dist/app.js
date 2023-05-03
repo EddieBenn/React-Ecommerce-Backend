@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const config_1 = require("./config");
 const dotenv_1 = __importDefault(require("dotenv"));
 const morgan_1 = __importDefault(require("morgan"));
@@ -17,13 +18,16 @@ dotenv_1.default.config();
 (0, config_1.connectDB)();
 //Middleware
 app.use((0, morgan_1.default)('dev'));
+app.use((0, cors_1.default)({
+    origin: "*"
+}));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use('/api/users', userRoute_1.default);
 app.use('/api/users', adminRoute_1.default);
-app.use('/api/users', productRoute_1.default);
-app.use('/api/users', cartRoute_1.default);
-app.use('/api/users', orderRoute_1.default);
+app.use('/api/product', productRoute_1.default);
+app.use('/api/cart', cartRoute_1.default);
+app.use('/api/order', orderRoute_1.default);
 app.listen(process.env.PORT, () => {
     console.log(`Server listening on PORT ${process.env.PORT}`);
 });
