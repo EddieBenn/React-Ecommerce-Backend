@@ -31,7 +31,7 @@ exports.ProductSchema = new mongoose_1.default.Schema({
     categories: { type: (Array) },
     size: { type: Array },
     color: { type: Array },
-    prize: { type: Number },
+    price: { type: Number },
     adminId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User" },
     image: { type: String },
     inStock: { type: Boolean, default: true },

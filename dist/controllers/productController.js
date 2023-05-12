@@ -65,7 +65,7 @@ exports.getAllProducts = getAllProducts;
 const createProduct = async (req, res) => {
     try {
         const id = req.user.id;
-        const { title, description, categories, size, color, prize, image } = req.body;
+        const { title, description, categories, size, color, price, image } = req.body;
         // Check if the product name exist
         const productExist = await productModel_1.default.findOne({ title });
         if (productExist) {
@@ -79,7 +79,7 @@ const createProduct = async (req, res) => {
             categories,
             size,
             color,
-            prize,
+            price,
             adminId: id,
             image: req.file.path
         });
@@ -120,7 +120,7 @@ const updateProduct = async (req, res) => {
             categories: req.body.categories || product.categories,
             size: req.body.size || product.size,
             color: req.body.color || product.color,
-            prize: req.body.prize || product.prize,
+            price: req.body.price || product.price,
             image: req.file.path || product.image,
         }, {
             new: true,

@@ -6,7 +6,7 @@ export interface ProductAttributes {
     categories: Array<string>,
     size: Array<string>,
     color: Array<string>,
-    prize: number
+    price: number
     adminId: string,
     image: string,
     inStock: boolean,
@@ -18,7 +18,7 @@ export const ProductSchema = new mongoose.Schema({
     categories: {type: Array<string>},
     size: {type: Array},
     color: {type: Array},
-    prize: {type: Number},
+    price: {type: Number},
     adminId: {type: Schema.Types.ObjectId, ref: "User"},
     image: {type: String},
     inStock: {type: Boolean, default: true},

@@ -68,7 +68,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
 export const createProduct = async (req: JwtPayload, res: Response) => {
     try {
       const id = req.user.id
-      const { title, description, categories, size, color, prize, image } = req.body
+      const { title, description, categories, size, color, price, image } = req.body
   
       // Check if the product name exist
       const productExist = await Product.findOne({ title });
@@ -84,7 +84,7 @@ export const createProduct = async (req: JwtPayload, res: Response) => {
         categories,
         size,
         color,
-        prize,
+        price,
         adminId: id,
         image: req.file.path
       });
@@ -128,7 +128,7 @@ export const updateProduct = async (req: JwtPayload, res: Response) => {
         categories: req.body.categories || product.categories,
         size: req.body.size || product.size,
         color: req.body.color || product.color,
-        prize: req.body.prize || product.prize,
+        price: req.body.price || product.price,
         image: req.file.path || product.image,
       }, {
         new: true,
