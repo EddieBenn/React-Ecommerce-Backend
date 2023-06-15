@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 
 export const handlePayment = async (req: Request, res: Response) => {
     try {
@@ -17,7 +22,7 @@ export const handlePayment = async (req: Request, res: Response) => {
                 return res.status(200).json({
                     message: stripeRes
                 })
-            }
+            } 
         })
     } catch (error) {
         return res.status(500).json({

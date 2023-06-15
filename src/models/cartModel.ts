@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export interface CartAttributes {
     userId: string,
-    products: Array<string & number>,
+    products: Array<string | number>,
 }
 
 export const CartSchema = new mongoose.Schema({

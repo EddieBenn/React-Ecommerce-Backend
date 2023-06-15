@@ -9,6 +9,7 @@ import adminRoute from './routes/adminRoute';
 import productRoute from './routes/productRoute'
 import cartRoute from './routes/cartRoute';
 import orderRoute from './routes/orderRoute';
+import paymentRoute from './routes/stripeRoute';
 
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/users', adminRoute);
 app.use('/api/product', productRoute);
 app.use('/api/cart', cartRoute);
 app.use('/api/order', orderRoute);
+app.use("/api/checkout", paymentRoute)
 
 
 app.listen(process.env.PORT, () => {

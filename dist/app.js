@@ -13,6 +13,7 @@ const adminRoute_1 = __importDefault(require("./routes/adminRoute"));
 const productRoute_1 = __importDefault(require("./routes/productRoute"));
 const cartRoute_1 = __importDefault(require("./routes/cartRoute"));
 const orderRoute_1 = __importDefault(require("./routes/orderRoute"));
+const stripeRoute_1 = __importDefault(require("./routes/stripeRoute"));
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 (0, config_1.connectDB)();
@@ -28,6 +29,7 @@ app.use('/api/users', adminRoute_1.default);
 app.use('/api/product', productRoute_1.default);
 app.use('/api/cart', cartRoute_1.default);
 app.use('/api/order', orderRoute_1.default);
+app.use("/api/checkout", stripeRoute_1.default);
 app.listen(process.env.PORT, () => {
     console.log(`Server listening on PORT ${process.env.PORT}`);
 });

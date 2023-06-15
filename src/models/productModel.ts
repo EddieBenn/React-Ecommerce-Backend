@@ -6,7 +6,7 @@ export interface ProductAttributes {
     categories: Array<string>,
     size: Array<string>,
     color: Array<string>,
-    price: number
+    price: number,
     adminId: string,
     image: string,
     inStock: boolean,
