@@ -8,7 +8,7 @@ const authorization_1 = require("../middlewares/authorization");
 const orderController_1 = require("../controllers/orderController");
 const router = express_1.default.Router();
 router.post("/create-order", authorization_1.protect, orderController_1.createOrder);
-router.get("/get-user-orders/:userId", authorization_1.protect, authorization_1.verifyAndAuthorize, orderController_1.getUserOrders);
+router.get("/get-user-orders/:id", authorization_1.protect, authorization_1.verifyAndAuthorize, orderController_1.getUserOrders);
 //Only admin can modify the order
 router.put("/update-order/:id", authorization_1.protect, authorization_1.verifyAndAuthorizeAdmin, orderController_1.updateOrder);
 router.delete("/delete-order/:id", authorization_1.protect, authorization_1.verifyAndAuthorizeAdmin, orderController_1.deleteOrder);

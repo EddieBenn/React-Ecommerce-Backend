@@ -1,15 +1,17 @@
 import { Request, Response } from "express";
 import User from "../models/userModel";
 import bcrypt from "bcrypt";
+import { JwtPayload } from "jsonwebtoken";
 
 /** ================= Register Admin ===================== **/
 
-export const registerAdmin = async (req: Request, res: Response) => {
+export const registerAdmin = async (req: JwtPayload, res: Response) => {
   try {
-    const { username, email, password, firstName, lastName, phone } = req.body;
+    const { username, email, password, firstName, lastName, phone, image } = req.body;
 
     // check if the admin exist
     const admin = await User.findOne({ email });
+  
     if (admin) {
       return res.status(400).json({
         Error: "Admin already exist, use a different email and username",
@@ -18,7 +20,7 @@ export const registerAdmin = async (req: Request, res: Response) => {
 
     //Encrypt Password
     const adminPassword = await bcrypt.hash(password, 10);
-
+   
     //Create Admin
     const newAdmin = await User.create({
       username,
@@ -28,6 +30,7 @@ export const registerAdmin = async (req: Request, res: Response) => {
       email,
       password: adminPassword,
       role: "admin",
+      image: req.file,
     });
 
     newAdmin.save();
@@ -41,6 +44,7 @@ export const registerAdmin = async (req: Request, res: Response) => {
       email: newAdmin.email,
       role: newAdmin.role,
       _id: newAdmin._id,
+      image: newAdmin.image,
     });
   } catch (error) {
     return res.status(400).json({
@@ -59,7 +63,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
      const query = req.query.new
 
      //Sorting in descending order
-     const users = query ? await User.find().sort({_id: 1}).limit(2) : await User.find()
+     const users = query ? await User.find().sort({_id: 1}).limit(5) : await User.find()
 
     if (users) {
       return res.status(200).json({
@@ -89,7 +93,7 @@ export const getUserStats = async (req: Request, res: Response) => {
 
    //We use $match to check the year, then project to get the month
   try {
-    const data = await User.aggregate([
+    const userData = await User.aggregate([
       { $match: { createdAt: { $gte: lastYear }}},
       {
         $project: {
@@ -106,7 +110,7 @@ export const getUserStats = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Successfully fetched users statistics",
-      data
+      userData
     });
 
   } catch (error) {

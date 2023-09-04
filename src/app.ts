@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { connectDB } from './config';
@@ -19,12 +19,13 @@ dotenv.config();
 connectDB();
 
 //Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(logger('dev'));
 app.use(cors({
  origin: "*"
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
 app.use('/api/users', userRoute);
 app.use('/api/users', adminRoute);
 app.use('/api/product', productRoute);
@@ -32,9 +33,9 @@ app.use('/api/cart', cartRoute);
 app.use('/api/order', orderRoute);
 app.use("/api/checkout", paymentRoute)
 
-
-app.listen(process.env.PORT, () => {
-    console.log(`Server listening on PORT ${process.env.PORT}`);
+const PORT = process.env.PORT || 3030
+app.listen(PORT, () => {
+    console.log(`Server listening on PORT ${PORT}`);
 })
 
 export default app

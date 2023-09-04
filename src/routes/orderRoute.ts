@@ -5,7 +5,7 @@ import { createOrder, updateOrder, deleteOrder, getUserOrders, getAllOrders, get
 const router = express.Router();
 
 router.post("/create-order", protect, createOrder);
-router.get("/get-user-orders/:userId", protect, verifyAndAuthorize, getUserOrders);
+router.get("/get-user-orders/:id", protect, verifyAndAuthorize, getUserOrders);
 
 
 //Only admin can modify the order

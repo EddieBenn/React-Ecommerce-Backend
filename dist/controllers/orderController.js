@@ -5,21 +5,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMonthlyStats = exports.getAllOrders = exports.getUserOrders = exports.deleteOrder = exports.updateOrder = exports.createOrder = void 0;
 const orderModel_1 = __importDefault(require("../models/orderModel"));
+const userModel_1 = __importDefault(require("../models/userModel"));
 const createOrder = async (req, res) => {
     try {
-        const { userId, products, amount, address, status } = req.body;
+        const id = req.user._id;
+        const { products, amount, address } = req.body;
+        const user = await userModel_1.default.findOne(id);
         const orderedProduct = await orderModel_1.default.create({
-            userId, products, amount, address, status
+            products,
+            amount,
+            address,
+            userInfo: {
+                userId: id,
+                username: user?.username,
+                firstName: user?.firstName,
+                lastName: user?.lastName,
+                image: user?.image,
+            },
         });
         return res.status(200).json({
             message: "Order Successfully created",
-            orderedProduct
+            orderedProduct,
         });
     }
     catch (error) {
         return res.status(500).json({
             Error: "Internal Server Error",
-            route: "/create-order"
+            route: "/create-order",
         });
     }
 };
@@ -28,17 +40,17 @@ const updateOrder = async (req, res) => {
     try {
         const { id } = req.params;
         const updatedOrder = await orderModel_1.default.findByIdAndUpdate(id, {
-            $set: req.body
+            $set: req.body,
         }, { new: true });
         return res.status(200).json({
             message: "Successfully updated order details",
-            updatedOrder
+            updatedOrder,
         });
     }
     catch (error) {
         return res.status(500).json({
             Error: "Internal Server Error",
-            route: "/update-order/:id"
+            route: "/update-order/:id",
         });
     }
 };
@@ -49,13 +61,13 @@ const deleteOrder = async (req, res) => {
         const deletedOrder = await orderModel_1.default.findByIdAndDelete(id);
         return res.status(200).json({
             message: "Order successfully deleted",
-            deletedOrder
+            deletedOrder,
         });
     }
     catch (error) {
         return res.status(500).json({
             Error: "Internal Server Error",
-            route: "/delete-order/:id"
+            route: "/delete-order/:id",
         });
     }
 };
@@ -63,11 +75,11 @@ exports.deleteOrder = deleteOrder;
 /**================= Get user orders =================**/
 const getUserOrders = async (req, res) => {
     try {
-        const { userId } = req.params;
-        const getUserOrders = await orderModel_1.default.find({ userId });
+        const id = req.params.id;
+        const orders = await orderModel_1.default.find({ id });
         return res.status(200).json({
             message: "Successfully fetched user orders",
-            getUserOrders
+            orders,
         });
     }
     catch (error) {
@@ -81,16 +93,16 @@ exports.getUserOrders = getUserOrders;
 /**================= Get all orders =================**/
 const getAllOrders = async (req, res) => {
     try {
-        const getOrders = await orderModel_1.default.find();
+        const orders = await orderModel_1.default.find();
         return res.status(200).json({
             message: "Successfully fetched all orders",
-            getOrders,
+            orders,
         });
     }
     catch (error) {
         return res.status(500).json({
             Error: "Internal Server Error",
-            route: "/get-all-orders"
+            route: "/get-all-orders",
         });
     }
 };
@@ -98,15 +110,25 @@ exports.getAllOrders = getAllOrders;
 /** ================ Get Monthly Sales Statistics ================== **/
 const getMonthlyStats = async (req, res) => {
     try {
+        const productId = req.query.productId;
         const date = new Date();
-        //Getting last month's date 
+        //Getting last month's date
         const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
         //To get the month before last month
         const previousMonth = new Date(date.setMonth(lastMonth.getMonth() - 1));
         //We use $match to check the year, then project to get the particular month
         const income = await orderModel_1.default.aggregate([
-            { $match: { createdAt: { $gte: previousMonth } } },
-            { $project: {
+            {
+                $match: {
+                    createdAt: { $gte: previousMonth },
+                    ...(productId && { products: {
+                            $elemMatch: { productId }
+                        },
+                    }),
+                },
+            },
+            {
+                $project: {
                     month: { $month: "$createdAt" },
                     sales: "$amount",
                 },
@@ -120,7 +142,7 @@ const getMonthlyStats = async (req, res) => {
         ]);
         return res.status(200).json({
             message: "Successfully fetched income statistics",
-            income
+            income,
         });
     }
     catch (error) {

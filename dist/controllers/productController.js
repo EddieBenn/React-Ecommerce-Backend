@@ -43,6 +43,7 @@ const getAllProducts = async (req, res) => {
                     $in: [queryCategory],
                 }
             });
+            console.log(products);
             //a fall back to find all products
         }
         else {

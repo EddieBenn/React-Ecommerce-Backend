@@ -45,7 +45,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
                     $in: [queryCategory],
                 }
             });
-
+        console.log(products)
         //a fall back to find all products
         }else{
             products = await Product.find()
@@ -69,7 +69,7 @@ export const createProduct = async (req: JwtPayload, res: Response) => {
     try {
       const id = req.user.id
       const { title, description, categories, size, color, price, image } = req.body
-  
+      
       // Check if the product name exist
       const productExist = await Product.findOne({ title });
       if(productExist) {
@@ -121,7 +121,7 @@ export const updateProduct = async (req: JwtPayload, res: Response) => {
           message: "Product not found"
         });
       }
-  
+
       const updatedProduct = await Product.findByIdAndUpdate(id, {
         title: req.body.title || product.title,
         description: req.body.description || product.description,

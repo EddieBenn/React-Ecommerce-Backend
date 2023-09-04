@@ -3,13 +3,15 @@ import User from "../models/userModel";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
-import Product from "../models/productModel";
+import multer from 'multer';
+
+
 
 
 /**======================== Register ===========================**/
-export const Register = async (req: Request, res: Response) => {
+export const Register = async (req: JwtPayload, res: Response) => {
   try {
-    const { username, email, password, firstName, lastName, phone } = req.body;
+    const { username, email, password, firstName, lastName, phone, image} = req.body;
 
     // check if the user exist
     const user = await User.findOne({ email });
@@ -30,6 +32,7 @@ export const Register = async (req: Request, res: Response) => {
       phone,
       email,
       password: userpassword,
+      image: req.file,
       role: "user"
     });
 
@@ -42,10 +45,12 @@ export const Register = async (req: Request, res: Response) => {
       lastName: newUser.lastName,
       phone: newUser.phone,
       email: newUser.email,
+      image: newUser.image,
       role: newUser.role,
       _id: newUser._id,
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error.message)
     return res.status(400).json({
       Error: "An error occurred while registering user",
       error,
@@ -60,11 +65,15 @@ export const Login = async (req: Request, res: Response) => {
 
     // check if the user exist
     const user = await User.findOne({ username });
+
+    // console.log(user)
     if (user && (await bcrypt.compare(password, user.password))) {
       const { _id, email, role } = user;
       const token = jwt.sign({ _id, email, role }, JWT_SECRET as string, {
         expiresIn: "3d",
       });
+
+
 
       //Omit password when sending response
       return res.status(200).json({
@@ -74,6 +83,7 @@ export const Login = async (req: Request, res: Response) => {
         lastName: user.lastName,
         phone: user.phone,
         email: user.email,
+        image: user.image,
         role: user.role,
         _id: user._id,
         token,
@@ -106,6 +116,7 @@ export const getSingleUser = async (req: JwtPayload, res: Response) => {
         lastName: user.lastName,
         phone: user.phone,
         email: user.email,
+        image: user.image,
         role: user.role,
         _id: user._id,
       })
@@ -131,11 +142,13 @@ export const updateUserProfile = async (req: JwtPayload, res: Response) => {
     const updatedUser = await User.findByIdAndUpdate(id, {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      phone: req.body.phone
+      phone: req.body.phone,
+      image: req.body.image,
     }, {
       new: true,
     });
 
+    updatedUser?.save();
     if(updatedUser) {
       const user = await User.findById(id)
       return res.status(201).json({
@@ -147,7 +160,7 @@ export const updateUserProfile = async (req: JwtPayload, res: Response) => {
         Error: "An error occured",
       });
     }
-    
+
   } catch (error) {
     return res.status(500).json({
       Error: "Internal server Error",

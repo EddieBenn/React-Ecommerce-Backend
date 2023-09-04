@@ -18,19 +18,20 @@ const app = (0, express_1.default)();
 dotenv_1.default.config();
 (0, config_1.connectDB)();
 //Middleware
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, morgan_1.default)('dev'));
 app.use((0, cors_1.default)({
     origin: "*"
 }));
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: false }));
 app.use('/api/users', userRoute_1.default);
 app.use('/api/users', adminRoute_1.default);
 app.use('/api/product', productRoute_1.default);
 app.use('/api/cart', cartRoute_1.default);
 app.use('/api/order', orderRoute_1.default);
 app.use("/api/checkout", stripeRoute_1.default);
-app.listen(process.env.PORT, () => {
-    console.log(`Server listening on PORT ${process.env.PORT}`);
+const PORT = process.env.PORT || 3030;
+app.listen(PORT, () => {
+    console.log(`Server listening on PORT ${PORT}`);
 });
 exports.default = app;

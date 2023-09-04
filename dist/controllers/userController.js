@@ -11,7 +11,7 @@ const config_1 = require("../config");
 /**======================== Register ===========================**/
 const Register = async (req, res) => {
     try {
-        const { username, email, password, firstName, lastName, phone } = req.body;
+        const { username, email, password, firstName, lastName, phone, image } = req.body;
         // check if the user exist
         const user = await userModel_1.default.findOne({ email });
         if (user) {
@@ -29,6 +29,7 @@ const Register = async (req, res) => {
             phone,
             email,
             password: userpassword,
+            image: req.file,
             role: "user"
         });
         newUser.save();
@@ -39,11 +40,13 @@ const Register = async (req, res) => {
             lastName: newUser.lastName,
             phone: newUser.phone,
             email: newUser.email,
+            image: newUser.image,
             role: newUser.role,
             _id: newUser._id,
         });
     }
     catch (error) {
+        console.log(error.message);
         return res.status(400).json({
             Error: "An error occurred while registering user",
             error,
@@ -57,6 +60,7 @@ const Login = async (req, res) => {
         const { username, password } = req.body;
         // check if the user exist
         const user = await userModel_1.default.findOne({ username });
+        // console.log(user)
         if (user && (await bcrypt_1.default.compare(password, user.password))) {
             const { _id, email, role } = user;
             const token = jsonwebtoken_1.default.sign({ _id, email, role }, config_1.JWT_SECRET, {
@@ -70,6 +74,7 @@ const Login = async (req, res) => {
                 lastName: user.lastName,
                 phone: user.phone,
                 email: user.email,
+                image: user.image,
                 role: user.role,
                 _id: user._id,
                 token,
@@ -102,6 +107,7 @@ const getSingleUser = async (req, res) => {
                 lastName: user.lastName,
                 phone: user.phone,
                 email: user.email,
+                image: user.image,
                 role: user.role,
                 _id: user._id,
             });
@@ -126,10 +132,12 @@ const updateUserProfile = async (req, res) => {
         const updatedUser = await userModel_1.default.findByIdAndUpdate(id, {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            phone: req.body.phone
+            phone: req.body.phone,
+            image: req.body.image,
         }, {
             new: true,
         });
+        updatedUser?.save();
         if (updatedUser) {
             const user = await userModel_1.default.findById(id);
             return res.status(201).json({

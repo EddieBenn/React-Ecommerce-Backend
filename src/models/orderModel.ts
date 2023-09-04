@@ -1,15 +1,21 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface OrderAttributes {
-    userId: string,
     products: Array<string | number>,
     amount: number,
-    address: {},
+    address: string,
     status: string
 }
 
+const userInfoSchema = new mongoose.Schema({
+    userId: {type:String},
+    username: {type:String},
+    image:{type:String},
+    firstName:{type:String},
+    lastName: {type:String},
+})
+
 export const OrderSchema = new mongoose.Schema({
-    userId: {type: String, required: true, unique: true},
     products: [
         { 
             productId: {type: String},
@@ -17,8 +23,9 @@ export const OrderSchema = new mongoose.Schema({
         }
     ],
     amount: {type: Number, required: true},
-    address: {type: Object, required: true},
-    status: {type: String, default: "pending"}
+    address: {type: String, required: true},
+    status: {type: String, default: "pending"},
+    userInfo: userInfoSchema
 }, {
     timestamps: true
 });
