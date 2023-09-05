@@ -45,7 +45,6 @@ export const getAllProducts = async (req: Request, res: Response) => {
                     $in: [queryCategory],
                 }
             });
-        console.log(products)
         //a fall back to find all products
         }else{
             products = await Product.find()
