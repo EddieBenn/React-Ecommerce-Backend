@@ -1,6 +1,5 @@
-import express, {Request, Response} from 'express';
+import express from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
 import { connectDB } from './config';
 import dotenv from 'dotenv';
 import logger from 'morgan';
